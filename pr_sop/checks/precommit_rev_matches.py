@@ -85,9 +85,24 @@ class PrecommitRevMatchesTag:
 
     @staticmethod
     def _latest_tag(repo_root) -> str | None:
+        """Return the highest semver-style tag in the repo.
+
+        Uses `git tag --sort=-v:refname` (natural version sort, descending)
+        rather than `git describe --tags --abbrev=0`. The describe approach
+        requires the tag to be reachable from HEAD, which breaks in GitHub
+        Actions PR runs: the ephemeral merge commit GitHub creates for
+        `pull_request` events often does not have the latest release tag in
+        its ancestry, so describe silently fails and the check returned
+        zero findings even when drift was present (pr-sop #issue-forthcoming).
+
+        The version-sorted listing is resilient to that: it reports the
+        highest tag regardless of whether HEAD can reach it, which is also
+        the right semantic for "does your rev pin match the most recent
+        release?".
+        """
         try:
             result = subprocess.run(
-                ["git", "describe", "--tags", "--abbrev=0"],
+                ["git", "tag", "--sort=-v:refname"],
                 cwd=repo_root,
                 capture_output=True,
                 text=True,
@@ -97,7 +112,8 @@ class PrecommitRevMatchesTag:
             return None
         if result.returncode != 0:
             return None
-        return result.stdout.strip() or None
+        first_line = result.stdout.strip().splitlines()
+        return first_line[0] if first_line else None
 
     @staticmethod
     def _origin_url(repo_root) -> str | None:

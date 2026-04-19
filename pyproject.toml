@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pr-sop"
-version = "0.1.1"
+version = "0.1.2"
 description = "Opinionated PR governance checks. Config-driven, no LLM. Runs as pre-commit hook, CLI, or GitHub Action."
 readme = "README.md"
 license = "MIT"
