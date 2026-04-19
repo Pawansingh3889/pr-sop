@@ -1,0 +1,23 @@
+# pr-sop config for scanning the sql-guard repo from outside.
+checks:
+  changelog_required:
+    severity: error
+    paths:
+      - "sql_guard/**/*.py"
+    changelog_file: CHANGELOG.md
+
+  # sql-guard switched to importlib.metadata.version() at HEAD, so
+  # __init__.py has no literal version string to compare against.
+  # Keeping pyproject alone means version-consistency is effectively
+  # a no-op here — that's fine, the point of the HEAD scan is to
+  # prove changelog-required and precommit-rev still run clean.
+  version_consistency:
+    severity: error
+    sources:
+      - file: pyproject.toml
+        pattern: '^version\s*=\s*"([^"]+)"'
+
+  precommit_rev_matches_tag:
+    severity: warning
+    files:
+      - README.md

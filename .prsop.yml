@@ -1,0 +1,18 @@
+# pr-sop config, dogfooded against this repo.
+checks:
+  changelog_required:
+    severity: error
+    paths:
+      - "pr_sop/**/*.py"
+      - "action.yml"
+
+  version_consistency:
+    severity: error
+    sources:
+      - file: "pyproject.toml"
+        pattern: '^version\s*=\s*"([^"]+)"'
+
+  precommit_rev_matches_tag:
+    severity: warning
+    files:
+      - "README.md"

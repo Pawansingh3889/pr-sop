@@ -1,0 +1,21 @@
+# pr-sop config for scanning sql-guard at afb9c01 (pre-cleanup).
+# At this commit, __init__.py still had a literal __version__, so the
+# full version-consistency check has something to compare.
+checks:
+  changelog_required:
+    severity: error
+    paths:
+      - "sql_guard/**/*.py"
+
+  version_consistency:
+    severity: error
+    sources:
+      - file: pyproject.toml
+        pattern: '^version\s*=\s*"([^"]+)"'
+      - file: sql_guard/__init__.py
+        pattern: '__version__\s*=\s*"([^"]+)"'
+
+  precommit_rev_matches_tag:
+    severity: warning
+    files:
+      - README.md
