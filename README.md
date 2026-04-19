@@ -16,7 +16,6 @@ Same naming, same philosophy: catch real drift fast, skip the ceremony.
 - [PyPI](https://pypi.org/project/pr-sop/)
 - [Download stats](https://pypistats.org/packages/pr-sop)
 - Install: `pip install pr-sop`
-- [Profile](https://github.com/Pawansingh3889)
 - **Contributing:** [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`GOVERNANCE.md`](GOVERNANCE.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · [`SECURITY.md`](SECURITY.md) · [`NOTICE`](NOTICE)
 
 ## Why Does This Exist?
