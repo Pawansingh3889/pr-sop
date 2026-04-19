@@ -1,0 +1,31 @@
+pr-sop
+Copyright 2026 Pawan Singh Kapkoti
+
+This product is licensed under the MIT License (see LICENSE).
+
+Why MIT and not Apache 2.0
+--------------------------
+pr-sop is published on PyPI (https://pypi.org/project/pr-sop/) and is
+consumed as an MIT-licensed dependency from v0.1.0 onwards. Relicensing
+a published package is a breaking change for users whose compliance
+pipelines are configured around a specific licence. If and when a major
+version bump (v1.0.0) happens, Apache 2.0 will be considered at that
+point with a clear migration notice.
+
+Runtime dependencies
+--------------------
+pr-sop's runtime dependencies are all permissively licensed:
+
+- pydantic (MIT), config schema and validation
+- PyYAML (MIT), .prsop.yml loader
+- typer (MIT), CLI framework
+- rich (MIT), terminal output
+
+Each dependency's licence prevails over anything in this NOTICE file
+when that dependency is installed.
+
+Trademarks
+----------
+"pr-sop" is not a registered trademark. If you fork or redistribute a
+modified version, please rename it so users can distinguish your fork
+from the upstream.
