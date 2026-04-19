@@ -7,6 +7,14 @@ pr-sop uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Full project documentation pass: `CONTRIBUTING.md`, `GOVERNANCE.md`,
+  `CODE_OF_CONDUCT.md`, `SECURITY.md`, and `NOTICE`, modelled on the
+  sql-guard / sql-sop set. README restructured with a badges row, a
+  Links block, a "Why Does This Exist?" narrative, a Key Numbers
+  table, an example terminal output, and a workflow snippet pinned
+  at `Pawansingh3889/pr-sop@v0.1.1`.
+
 ## [0.1.1] - 2026-04-19
 
 ### Fixed
