@@ -32,6 +32,7 @@ pr-sop is a tiny, config-driven checker that runs before merge and surfaces the 
 | Checks | 3 (2 errors, 1 warning) |
 | Tests | 29 |
 | Runtime | under 1 second on a typical PR |
+| PyPI downloads | [monthly live](https://pypistats.org/packages/pr-sop) (new release, stats warming up) |
 | Version | 0.1.1 |
 
 ## What it checks
