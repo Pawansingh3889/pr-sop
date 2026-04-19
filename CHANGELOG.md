@@ -7,6 +7,24 @@ pr-sop uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-04-19
+
+### Fixed
+- `precommit-rev-matches-tag` now surfaces drift in GitHub Actions PR
+  runs that it silently passed before. The previous implementation
+  used `git describe --tags --abbrev=0`, which requires the latest
+  release tag to be an ancestor of HEAD. In Actions `pull_request`
+  runs, the ephemeral merge commit GitHub creates is often not a
+  descendant of the tag, so describe returned non-zero and the check
+  returned an empty findings list without any indication anything had
+  gone wrong. The check now uses `git tag --sort=-v:refname` and
+  picks the highest version across all tags in the repo, regardless
+  of reachability. That is also the right semantic: "does your
+  `rev:` pin match the most recent release?" does not depend on
+  branch topology. Discovered against sql-guard; the PR governance
+  workflow now surfaces the expected `v0.4.0` vs `v0.4.1` drift on
+  `.pre-commit-config.yaml`.
+
 ### Added
 - Full project documentation pass: `CONTRIBUTING.md`, `GOVERNANCE.md`,
   `CODE_OF_CONDUCT.md`, `SECURITY.md`, and `NOTICE`, modelled on the
