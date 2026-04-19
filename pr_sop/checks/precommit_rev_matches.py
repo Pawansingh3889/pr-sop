@@ -1,9 +1,10 @@
-"""precommit-rev-matches-tag: `rev:` pins in configured files must match latest git tag."""
+"""precommit-rev-matches-tag: `rev:` pins referencing this repo must match latest git tag."""
 
 from __future__ import annotations
 
 import re
 import subprocess
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from pr_sop.checks.base import CheckContext, Finding
@@ -23,18 +24,28 @@ class PrecommitRevMatchesTag:
         if not latest_tag:
             return []
 
+        repo_matches: Callable[[str], bool] = self._build_repo_matcher(ctx.repo_root)
+
         findings: list[Finding] = []
+        repo_line = re.compile(r"repo:\s*['\"]?([^'\"\s]+)['\"]?")
         rev_line = re.compile(r"rev:\s*['\"]?([^'\"\s]+)['\"]?")
 
         for file_rel in self.config.files:
             path = ctx.repo_root / file_rel
             if not path.exists():
                 continue
+
+            current_matches = True
             for lineno, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-                m = rev_line.search(line)
-                if not m:
+                m_repo = repo_line.search(line)
+                if m_repo:
+                    current_matches = repo_matches(m_repo.group(1))
                     continue
-                rev = m.group(1)
+
+                m_rev = rev_line.search(line)
+                if not m_rev or not current_matches:
+                    continue
+                rev = m_rev.group(1)
                 if rev != latest_tag:
                     findings.append(
                         Finding(
@@ -52,6 +63,26 @@ class PrecommitRevMatchesTag:
 
         return findings
 
+    def _build_repo_matcher(self, repo_root) -> Callable[[str], bool]:
+        """Return url -> bool deciding whether a `repo:` entry references this repo.
+
+        Priority: explicit `repo_url_pattern` regex, then git origin URL auto-detect,
+        then a permissive default that keeps the legacy behaviour for callers with
+        no remote and no pattern configured.
+        """
+        assert self.config is not None
+        pattern = self.config.repo_url_pattern.strip()
+        if pattern:
+            regex = re.compile(pattern)
+            return lambda url: regex.search(url) is not None
+
+        origin = self._origin_url(repo_root)
+        if origin:
+            origin_key = self._normalise_repo_url(origin)
+            return lambda url: self._normalise_repo_url(url) == origin_key
+
+        return lambda _url: True
+
     @staticmethod
     def _latest_tag(repo_root) -> str | None:
         try:
@@ -67,3 +98,42 @@ class PrecommitRevMatchesTag:
         if result.returncode != 0:
             return None
         return result.stdout.strip() or None
+
+    @staticmethod
+    def _origin_url(repo_root) -> str | None:
+        try:
+            result = subprocess.run(
+                ["git", "remote", "get-url", "origin"],
+                cwd=repo_root,
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+        except (subprocess.SubprocessError, FileNotFoundError):
+            return None
+        if result.returncode != 0:
+            return None
+        return result.stdout.strip() or None
+
+    @staticmethod
+    def _normalise_repo_url(url: str) -> str:
+        """Reduce any of the common remote URL shapes to a lowercased `owner/name`.
+
+        Handles forms like `https://github.com/Owner/Name.git`,
+        `git@github.com:Owner/Name.git`, `ssh://git@github.com/Owner/Name`,
+        and bare `Owner/Name`.
+        """
+        s = url.strip().lower().rstrip("/")
+        if s.endswith(".git"):
+            s = s[:-4]
+
+        if s.startswith("git@") and ":" in s:
+            _, _, path = s.partition(":")
+            return path
+
+        if "://" in s:
+            _, _, after_scheme = s.partition("://")
+            _, _, path = after_scheme.partition("/")
+            return path
+
+        return s

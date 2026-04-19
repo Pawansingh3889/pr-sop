@@ -7,6 +7,22 @@ pr-sop uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-04-19
+
+### Fixed
+- `precommit-rev-matches-tag` no longer fires on third-party `rev:` pins in
+  `.pre-commit-config.yaml`. The check now only flags pins whose surrounding
+  `repo:` URL resolves to the current repo, determined from `git remote
+  get-url origin` (with a normaliser that treats HTTPS and SSH forms of the
+  same `owner/name` as equal). This makes the check usable in any repo whose
+  pre-commit config pulls in third-party hooks, which is effectively every
+  repo. Discovered while wiring pr-sop into sql-guard.
+
+### Added
+- New `PrecommitRevMatchesTagConfig.repo_url_pattern` field (regex) to force
+  the self-matching set explicitly, overriding the `origin` auto-detection.
+  Useful on forks or in CI runs where `origin` points at a mirror.
+
 ## [0.1.0] - 2026-04-19
 
 ### Added
