@@ -2,6 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/pr-sop)](https://pypi.org/project/pr-sop/)
 [![Python](https://img.shields.io/pypi/pyversions/pr-sop)](https://pypi.org/project/pr-sop/)
+[![CI](https://github.com/Pawansingh3889/pr-sop/actions/workflows/ci.yml/badge.svg)](https://github.com/Pawansingh3889/pr-sop/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![codecov](https://codecov.io/gh/Pawansingh3889/pr-sop/branch/main/graph/badge.svg)](https://codecov.io/gh/Pawansingh3889/pr-sop)
 [![Downloads](https://img.shields.io/pypi/dm/pr-sop?color=a07aff)](https://pypi.org/project/pr-sop/)
